@@ -2,6 +2,7 @@
     min-height: 100vh;
     background-color: #570987;
     font-family: 'Poppins', sans-serif;
+    overflow: hidden;
 }
 
 .contentWrapper {
