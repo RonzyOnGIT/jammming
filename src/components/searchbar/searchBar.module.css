@@ -1,0 +1,12 @@
+.formWrapper {
+    text-align: center;
+    margin-top: 6rem;
+}
+
+#searchInput {
+    font-size: 1.6rem;
+    border: none;
+    border-radius: .75rem;
+    padding: 0.3rem 1.5rem;
+    text-align: center;
+}
