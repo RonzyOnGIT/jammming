@@ -5,6 +5,11 @@
     overflow: hidden;
 }
 
+.login {
+    display: grid;
+    place-content: center;
+}
+
 .contentWrapper {
     display: flex;
     gap: 3rem;

@@ -4,6 +4,7 @@
     text-align: center;
     background-color: rgb(255, 255, 255);
     box-shadow: 2.2px 4.5px 4.5px hsl(0deg 0% 0% / 0.43);
+    overflow: hidden;
 }
 
 #navHeader {
