@@ -3,7 +3,7 @@ import styles from './app.module.css';
 import Navbar from './components/navbar/Navbar';
 import SearchBar from './components/searchbar/SearchBar';
 import Button from './components/button/Button';
-import { redirectToSpotifyAuth, handleRedirectFromSpotify, clearLocalStorage } from './utils/utils';
+import { redirectToSpotifyAuth, handleRedirectFromSpotify } from './utils/utils';
 import { useEffect, useState } from 'react';
 
 
@@ -15,14 +15,25 @@ const App = () => {
     useEffect(() => {
         // for first run, function will return null so either return a token or empty {}
         const { token = null, expiresIn = null} = handleRedirectFromSpotify() || {};
-        // console.log(token);
         console.log('run');
         if (token) {
             localStorage.setItem('currentToken', token);
             setIsAuthenticated(true);
+            setCurrToken(token);
         }
 
     }, [])
+
+    const logout = () => {
+        localStorage.removeItem('spotifyAuthState');
+        localStorage.removeItem('currentToken');
+        setCurrToken(null);
+        setIsAuthenticated(false);
+    }
+
+    // to make requests, include in headers: access_token (currToken)
+
+
 
     return (
         <>
@@ -40,6 +51,7 @@ const App = () => {
                             <h2>Create A Playlist</h2>
                         </div>
                     </div>
+                    {/* {isAuthenticated && <Button text='Logout' handleClick={logout} />} */}
                 </>
                 :   
                     <div className={styles.loginContainer}>

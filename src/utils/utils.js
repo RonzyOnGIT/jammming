@@ -6,17 +6,11 @@ const redirectUri = 'http://localhost:5173/';
 // random generated string to correlate user session with responses to prevent against attacks
 const scope = 'playlist-modify-public playlist-modify-private';
 
-// at this point, state and authUrl state r the same
-
 // returns object containing when expires and token value
 export const handleRedirectFromSpotify = () => {
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
     const returnState = params.get('state');
-
-    // console.log(`local state: ${state}`);
-    // console.log('url state: ' + params.get('state'));
-
 
     if (localStorage.getItem('spotifyAuthState') == returnState && params.has('access_token')) {
         const returnedParams = {
@@ -38,11 +32,6 @@ export const handleRedirectFromSpotify = () => {
     }
 }
 
-export const clearLocalStorage = () => {
-    localStorage.removeItem('spotifyAuthState');
-    localStorage.removeItem('currToken');
-}
-
 
 export const redirectToSpotifyAuth = () => {
     const state = uuidv4();
@@ -50,9 +39,6 @@ export const redirectToSpotifyAuth = () => {
     localStorage.setItem('spotifyAuthState', state);
     window.location.href = authUrl;
 }
-
-// should redirect once done back to callback url, then extract url param fields: 'access_token', 'expires_in', 'state'
-
 
 
 
