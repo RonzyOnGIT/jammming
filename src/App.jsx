@@ -3,10 +3,11 @@ import styles from './app.module.css';
 import Navbar from './components/navbar/Navbar';
 import SearchBar from './components/searchbar/SearchBar';
 import Button from './components/button/Button';
-import { redirectToSpotifyAuth, handleRedirectFromSpotify } from './utils/utils';
+import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs } from './utils/utils';
 import { useEffect, useState } from 'react';
 
 
+// TO DO:  refreshes on page cause to have to re-login
 const App = () => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -15,7 +16,6 @@ const App = () => {
     useEffect(() => {
         // for first run, function will return null so either return a token or empty {}
         const { token = null, expiresIn = null} = handleRedirectFromSpotify() || {};
-        console.log('run');
         if (token) {
             localStorage.setItem('currentToken', token);
             setIsAuthenticated(true);
@@ -31,9 +31,13 @@ const App = () => {
         setIsAuthenticated(false);
     }
 
-    // to make requests, include in headers: access_token (currToken)
-
-
+    const handleSubmit = (song) => {{
+        if (!song) {
+            console.log('no song inputted');
+            return;
+        }
+        fetchSongs(song, currToken);
+    }}
 
     return (
         <>
@@ -42,7 +46,7 @@ const App = () => {
             {isAuthenticated 
                 ?
                 <>
-                    <SearchBar />
+                    <SearchBar handleSubmit={handleSubmit} />
                     <div className={styles.contentWrapper}>
                         <div className={styles.contentContainer} id={styles.contentContainerLeft}>
                             <h2>Results</h2>

@@ -5,6 +5,8 @@ const responseType = 'token';
 const redirectUri = 'http://localhost:5173/';
 // random generated string to correlate user session with responses to prevent against attacks
 const scope = 'playlist-modify-public playlist-modify-private';
+let baseSearchUrl = 'https://api.spotify.com/v1/search';
+                    // https://api.spotify.com/v1/search?q={songname}&type={track}&limit=5
 
 // returns object containing when expires and token value
 export const handleRedirectFromSpotify = () => {
@@ -38,6 +40,27 @@ export const redirectToSpotifyAuth = () => {
     let authUrl = `https://accounts.spotify.com/authorize?response_type=${responseType}&client_id=${clientId}&scope=${scope}&redirect_uri=${redirectUri}&state=${state}`;
     localStorage.setItem('spotifyAuthState', state);
     window.location.href = authUrl;
+}
+
+export const fetchSongs = async (songName, accessToken) => {
+
+    const endPoint = `${baseSearchUrl}?q=${songName}&type=track&limit=5`;
+
+    const fetchOptions = {
+        method: 'GET',
+        headers: {'Authorization': 'Bearer ' + accessToken}
+    };
+
+    const res = await fetch(endPoint, fetchOptions);
+
+    if (!res.ok) {
+        console.log('request failed');
+        return;
+    }
+
+    const jsonFormat = await res.json();
+    console.log(jsonFormat);
+
 }
 
 
