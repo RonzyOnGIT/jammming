@@ -3,6 +3,8 @@ import styles from './app.module.css';
 import Navbar from './components/navbar/Navbar';
 import SearchBar from './components/searchbar/SearchBar';
 import Button from './components/button/Button';
+import Songs from './components/containers/songs/Songs';
+
 import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs } from './utils/utils';
 import { useEffect, useState } from 'react';
 
@@ -12,6 +14,9 @@ const App = () => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [currToken, setCurrToken] = useState(null);
+    const [songs, setSongs] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    
 
     useEffect(() => {
         // for first run, function will return null so either return a token or empty {}
@@ -31,12 +36,13 @@ const App = () => {
         setIsAuthenticated(false);
     }
 
-    const handleSubmit = (song) => {{
+    const handleSubmit = async (song) => {{
         if (!song) {
             console.log('no song inputted');
             return;
         }
-        fetchSongs(song, currToken);
+        const tracks = await fetchSongs(song, currToken);
+        setSongs(tracks);
     }}
 
     return (
@@ -50,6 +56,7 @@ const App = () => {
                     <div className={styles.contentWrapper}>
                         <div className={styles.contentContainer} id={styles.contentContainerLeft}>
                             <h2>Results</h2>
+                            {songs.length > 0 && <Songs songsList={songs} isLoading={isLoading} />}
                         </div>
                         <div className={styles.contentContainer} id={styles.contentContainerRight}>
                             <h2>Create A Playlist</h2>

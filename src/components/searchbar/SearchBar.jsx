@@ -20,7 +20,7 @@ const SearchBar = ({ handleSubmit }) => {
         <>
             <form className={styles.formWrapper} onSubmit={onSubmitForm}>
                 <input id={styles.searchInput} value={songName} placeholder='Enter Song' onChange={handleChange}></input>
-                {songName ? <SearchIcon /> : <p></p>}
+                {songName ? <SearchIcon /> : <></>}
             </form>
         </>
     )

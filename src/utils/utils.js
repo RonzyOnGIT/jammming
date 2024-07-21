@@ -6,7 +6,6 @@ const redirectUri = 'http://localhost:5173/';
 // random generated string to correlate user session with responses to prevent against attacks
 const scope = 'playlist-modify-public playlist-modify-private';
 let baseSearchUrl = 'https://api.spotify.com/v1/search';
-                    // https://api.spotify.com/v1/search?q={songname}&type={track}&limit=5
 
 // returns object containing when expires and token value
 export const handleRedirectFromSpotify = () => {
@@ -44,7 +43,7 @@ export const redirectToSpotifyAuth = () => {
 
 export const fetchSongs = async (songName, accessToken) => {
 
-    const endPoint = `${baseSearchUrl}?q=${songName}&type=track&limit=5`;
+    const endPoint = `${baseSearchUrl}?q=${songName}&type=track&limit=6`;
 
     const fetchOptions = {
         method: 'GET',
@@ -58,8 +57,10 @@ export const fetchSongs = async (songName, accessToken) => {
         return;
     }
 
-    const jsonFormat = await res.json();
-    console.log(jsonFormat);
+    const jsonResponse = await res.json();
+    const tracks = jsonResponse.tracks.items
+    // console.log(tracks);
+    return tracks;
 
 }
 

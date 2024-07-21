@@ -1,6 +1,6 @@
 .mainWrapper {
     min-height: 100vh;
-    background-color: #570987;
+    background-color: #510281;
     font-family: 'Poppins', sans-serif;
     overflow: hidden;
 }
@@ -19,11 +19,16 @@
 }
 
 .contentContainer {
-    background-color: #CBC3E3;
+    background-color: rgba(14, 11, 71, 0.3);
     text-align: center;
     border-radius: 0.3rem;
     padding: 0.75rem;
     min-height: 500px;
+    color: white;
+}
+
+.contentContainer h2 {
+    font-weight: 500;
 }
 
 #contentContainerLeft {

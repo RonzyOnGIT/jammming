@@ -1,0 +1,13 @@
+.songResultWrapper {
+    border-bottom: 1px solid black;
+    text-align: left;
+    padding-bottom: 0.3rem;
+}
+
+.artist {
+    font-weight: 300;
+}
+
+#artists {
+    display: inline;
+}
