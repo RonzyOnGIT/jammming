@@ -1,6 +1,12 @@
+html {
+    --white: white;
+    --backgroundPurple: #510281;
+    --darkBlueLowOpacity: rgba(14, 11, 71, 0.3);
+}
+
 .mainWrapper {
     min-height: 100vh;
-    background-color: #510281;
+    background-color: var(--backgroundPurple);
     font-family: 'Poppins', sans-serif;
     overflow: hidden;
 }
@@ -19,7 +25,7 @@
 }
 
 .contentContainer {
-    background-color: rgba(14, 11, 71, 0.3);
+    background-color: var(--darkBlueLowOpacity);
     text-align: center;
     border-radius: 0.3rem;
     padding: 0.75rem;

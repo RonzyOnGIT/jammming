@@ -2,12 +2,55 @@
     border-bottom: 1px solid black;
     text-align: left;
     padding-bottom: 0.3rem;
+    display: flex;
+    justify-content: space-between;
 }
 
 .artist {
     font-weight: 300;
+    color: var(--white);
+    opacity: 0.9;
 }
 
-#artists {
-    display: inline;
+#addToPlaylistButton {
+    border: none;
+    background-color: transparent;
+    padding: 0.2em 0.6em;
+    padding: 0;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--white);
+}
+
+#addToPlaylistButton:hover {
+    color: rgb(158, 155, 155);
+}
+
+.controls {
+    display: flex;
+    /* border: 2px solid blue; */
+    gap: 0.6rem;
+    align-items: center;
+}
+
+@media screen and (max-width: 565px) {
+
+    .infoContainer h3 {
+        font-size: 0.8rem;
+    }
+
+    .artist {
+        font-size: 0.65rem;
+    }
+}
+
+
+@media screen and (max-width: 340px) {
+    .infoContainer h3 {
+        font-size: 0.7rem;
+    }
+
+    .artist {
+        font-size: 0.4rem;
+    }
 }

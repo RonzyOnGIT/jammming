@@ -16,13 +16,14 @@ const App = () => {
     const [currToken, setCurrToken] = useState(null);
     const [songs, setSongs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
     
 
     useEffect(() => {
         // for first run, function will return null so either return a token or empty {}
         const { token = null, expiresIn = null} = handleRedirectFromSpotify() || {};
         if (token) {
-            localStorage.setItem('currentToken', token);
+            localStorage.setItem('currentToken', token);9
             setIsAuthenticated(true);
             setCurrToken(token);
         }
@@ -42,6 +43,7 @@ const App = () => {
             return;
         }
         const tracks = await fetchSongs(song, currToken);
+        console.log(tracks);
         setSongs(tracks);
     }}
 

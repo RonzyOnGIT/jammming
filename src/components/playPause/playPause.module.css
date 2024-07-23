@@ -1,0 +1,88 @@
+.playPause {
+    height: 26px;
+    width: 26px;
+    border-radius: 50%;
+    background-color: rgb(255, 255, 255);
+    /* border: 2px solid red; */
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.playDash {
+    width: 2px;
+    background-color: rgb(19, 18, 18);
+    display: block;
+    position: absolute;
+    border-radius: 3px;
+}
+
+.upStraight {
+    left: 8px;
+    top: 5px;
+    height: 17px;
+}
+
+.slantedDown {
+    height: 15px;
+    transform: rotate(120deg);
+    top: 2px;
+    left: 14px;
+    transition: transform 0.3s ease;
+}
+
+.slantedUp {
+    height: 16px;
+    left: 14.1px;
+    top: 9px;
+    transform: rotate(55deg);
+    transition: 0.3s ease;
+}
+
+.slantedUp.active{
+    height: 17px;
+    left: 15px;
+    top: 5px;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+}
+
+.slantedDown.active {
+    transform: translate(-30px, -30px);
+}
+
+
+@media screen and (max-width: 565px) {
+
+    .playPause {
+        height: 22px;
+        width: 22px;
+    }
+
+
+    .upStraight {
+        left: 7px;
+        top: 4px;
+        height: 14px;
+    }
+    
+    .slantedDown {
+        height: 12px;
+        transform: rotate(120deg);
+        top: 1.9px;
+        left: 12px;
+    }
+    
+    .slantedUp {
+        height: 12px;
+        left: 12px;
+        top: 7.8px;
+    }
+
+    .slantedUp.active{
+        height: 14px;
+        left: 13px;
+        top: 4px;
+    }
+}
+
