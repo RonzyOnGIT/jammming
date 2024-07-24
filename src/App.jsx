@@ -4,6 +4,7 @@ import Navbar from './components/navbar/Navbar';
 import SearchBar from './components/searchbar/SearchBar';
 import Button from './components/button/Button';
 import Songs from './components/containers/songs/Songs';
+import Playlists from './components/containers/playlists/Playlists'
 
 import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs } from './utils/utils';
 import { useEffect, useState } from 'react';
@@ -16,6 +17,7 @@ const App = () => {
     const [currToken, setCurrToken] = useState(null);
     const [songs, setSongs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [playlistSongs, setPlaylistSongs] = useState([]);
 
     
 
@@ -47,6 +49,16 @@ const App = () => {
         setSongs(tracks);
     }}
 
+    // figure out how to store playlist info
+    const addSongToPlaylist = (index, songName, artist) => {
+        const newSong = {
+            index: index,
+            name: songName,
+            artist: artist
+        }
+        setPlaylistSongs(prevPlaylist => [...prevPlaylist, newSong]);
+    }
+
     return (
         <>
         <Navbar />
@@ -58,7 +70,7 @@ const App = () => {
                     <div className={styles.contentWrapper}>
                         <div className={styles.contentContainer} id={styles.contentContainerLeft}>
                             <h2>Results</h2>
-                            {songs.length > 0 && <Songs songsList={songs} isLoading={isLoading} />}
+                            {songs.length > 0 && <Songs songsList={songs} isLoading={isLoading} addSongToPlaylist={addSongToPlaylist} />}
                         </div>
                         <div className={styles.contentContainer} id={styles.contentContainerRight}>
                             <h2>Create A Playlist</h2>

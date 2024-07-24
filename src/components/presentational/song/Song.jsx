@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 
 import PlayPause from '../../playPause/PlayPause';
 
-const Song = ({ name, artist, preview }) => {
+const Song = ({ name, artist, preview, index, addSongToPlaylist }) => {
     
     const [formattedArtists, setFormattedArtists] = useState('');
     const [isClicked, setIsClicked] = useState(false);
@@ -48,6 +48,10 @@ const Song = ({ name, artist, preview }) => {
         }
     }
 
+    const handleAddSong = () => {
+        addSongToPlaylist(index, name, formattedArtists);
+    }
+
     return (
         <>
             <div className={styles.songResultWrapper}>
@@ -57,7 +61,7 @@ const Song = ({ name, artist, preview }) => {
                 </div>
                 <div className={styles.controls}>
                     <PlayPause isClicked={isClicked} togglePlay={handleClick} />
-                    <button id={styles.addToPlaylistButton}>+</button>
+                    <button id={styles.addToPlaylistButton} onClick={handleAddSong}>+</button>
                 </div>
                 <audio ref={audioRef}><source src={preview} type="audio/mpeg"/>Your browser does not support the audio tag</audio>
             </div>
