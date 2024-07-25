@@ -10,7 +10,16 @@ import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs } from './
 import { useEffect, useState } from 'react';
 
 
-// TO DO:  refreshes on page cause to have to re-login
+// TO DO:  
+    // hover effects on play/pause button
+    // add song progres on button
+    // maybe refactor some of the functions in Song inside utils
+    // Add input for playlist title
+    // Work on functionality for making post request to put playlist on users acc
+    // Do something about only having an access token for 1 hour
+    // Find what to do with songs songs having a 'null' preview url
+    // The login feature and app 'life cycle?' doesn't really work like if I want to connect a diff account
+
 const App = () => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,7 +34,7 @@ const App = () => {
         // for first run, function will return null so either return a token or empty {}
         const { token = null, expiresIn = null} = handleRedirectFromSpotify() || {};
         if (token) {
-            localStorage.setItem('currentToken', token);9
+            localStorage.setItem('currentToken', token);
             setIsAuthenticated(true);
             setCurrToken(token);
         }
@@ -49,13 +58,26 @@ const App = () => {
         setSongs(tracks);
     }}
 
+    const removeSongFromPlaylist = (id) => {
+        // console.log('run');
+        setPlaylistSongs(prevSongs => prevSongs.filter(song => song.id !== id));
+        // console.log(playlistSongs);
+    }
+
     // figure out how to store playlist info
-    const addSongToPlaylist = (index, songName, artist) => {
+    const addSongToPlaylist = (index, songName, artist, id, isInPlaylist) => {
+
+        // if (isInPlaylist) {
+        //     removeSongFromPlaylist(id);
+        // }
+
         const newSong = {
             index: index,
             name: songName,
-            artist: artist
+            artist: artist,
+            id: id
         }
+
         setPlaylistSongs(prevPlaylist => [...prevPlaylist, newSong]);
     }
 
@@ -70,10 +92,11 @@ const App = () => {
                     <div className={styles.contentWrapper}>
                         <div className={styles.contentContainer} id={styles.contentContainerLeft}>
                             <h2>Results</h2>
-                            {songs.length > 0 && <Songs songsList={songs} isLoading={isLoading} addSongToPlaylist={addSongToPlaylist} />}
+                            {songs.length > 0 && <Songs songsList={songs} isLoading={isLoading} addSongToPlaylist={addSongToPlaylist} removeFromPlaylist={removeSongFromPlaylist} />}
                         </div>
                         <div className={styles.contentContainer} id={styles.contentContainerRight}>
                             <h2>Create A Playlist</h2>
+                            {playlistSongs.length > 0 && <Playlists playlistSongs={playlistSongs} removeFromPlaylist={removeSongFromPlaylist} />}
                         </div>
                     </div>
                     {/* {isAuthenticated && <Button text='Logout' handleClick={logout} />} */}
