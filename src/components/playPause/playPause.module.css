@@ -3,10 +3,13 @@
     width: 26px;
     border-radius: 50%;
     background-color: rgb(255, 255, 255);
-    /* border: 2px solid red; */
     position: relative;
     cursor: pointer;
     overflow: hidden;
+}
+
+.playPause:hover {
+    background-color: var(--onhover-white-color);
 }
 
 .playDash {

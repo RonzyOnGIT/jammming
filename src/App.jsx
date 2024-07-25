@@ -10,23 +10,12 @@ import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs } from './
 import { useEffect, useState } from 'react';
 
 
-// TO DO:  
-    // hover effects on play/pause button
-    // add song progres on button
-    // maybe refactor some of the functions in Song inside utils
-    // Add input for playlist title
-    // Work on functionality for making post request to put playlist on users acc
-    // Do something about only having an access token for 1 hour
-    // Find what to do with songs songs having a 'null' preview url
-    // The login feature and app 'life cycle?' doesn't really work like if I want to connect a diff account
-
 const App = () => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [currToken, setCurrToken] = useState(null);
     const [songs, setSongs] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [playlistSongs, setPlaylistSongs] = useState([]);
+    const [playlistSongs, setPlaylistSongs] = useState(new Map());
 
     
 
@@ -54,31 +43,32 @@ const App = () => {
             return;
         }
         const tracks = await fetchSongs(song, currToken);
-        console.log(tracks);
+        // console.log(tracks);
         setSongs(tracks);
     }}
 
     const removeSongFromPlaylist = (id) => {
-        // console.log('run');
-        setPlaylistSongs(prevSongs => prevSongs.filter(song => song.id !== id));
-        // console.log(playlistSongs);
+        setPlaylistSongs(prevPlaylist => {
+            const newMap = new Map(prevPlaylist);
+            newMap.delete(id);
+            return newMap;
+        })
     }
 
-    // figure out how to store playlist info
-    const addSongToPlaylist = (index, songName, artist, id, isInPlaylist) => {
-
-        // if (isInPlaylist) {
-        //     removeSongFromPlaylist(id);
-        // }
+    const addSongToPlaylist = (songName, artist, id) => {
 
         const newSong = {
-            index: index,
             name: songName,
             artist: artist,
             id: id
         }
 
-        setPlaylistSongs(prevPlaylist => [...prevPlaylist, newSong]);
+        setPlaylistSongs(prevMap => {
+            const newMap = new Map(prevMap);
+            newMap.set(id, newSong);
+            return newMap;
+        })
+
     }
 
     return (
@@ -92,11 +82,11 @@ const App = () => {
                     <div className={styles.contentWrapper}>
                         <div className={styles.contentContainer} id={styles.contentContainerLeft}>
                             <h2>Results</h2>
-                            {songs.length > 0 && <Songs songsList={songs} isLoading={isLoading} addSongToPlaylist={addSongToPlaylist} removeFromPlaylist={removeSongFromPlaylist} />}
+                            {songs.length > 0 && <Songs songsList={songs} addSongToPlaylist={addSongToPlaylist} removeFromPlaylist={removeSongFromPlaylist} playlistSongs={playlistSongs} />}
                         </div>
                         <div className={styles.contentContainer} id={styles.contentContainerRight}>
                             <h2>Create A Playlist</h2>
-                            {playlistSongs.length > 0 && <Playlists playlistSongs={playlistSongs} removeFromPlaylist={removeSongFromPlaylist} />}
+                            {playlistSongs.size > 0 && <Playlists playlistSongs={playlistSongs} removeFromPlaylist={removeSongFromPlaylist} />}
                         </div>
                     </div>
                     {/* {isAuthenticated && <Button text='Logout' handleClick={logout} />} */}

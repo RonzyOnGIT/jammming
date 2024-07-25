@@ -23,7 +23,7 @@
 }
 
 #addToPlaylistButton:hover {
-    color: rgb(158, 155, 155);
+    color: var(--onhover-white-color);
 }
 
 .controls {

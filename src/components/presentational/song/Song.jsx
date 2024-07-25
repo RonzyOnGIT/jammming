@@ -4,12 +4,14 @@ import { useState, useEffect, useRef } from 'react';
 
 import PlayPause from '../../playPause/PlayPause';
 
-const Song = ({ name, artist, preview, index, addSongToPlaylist, isSongInPlaylist, id, removeSongFromPlaylist }) => {
+const Song = ({ name, artist, preview, addSongToPlaylist, isSongInPlaylist, id, removeSongFromPlaylist, playlistSongs }) => {
     
     const [formattedArtists, setFormattedArtists] = useState('');
     const [isClicked, setIsClicked] = useState(false);
     const audioRef = useRef(null);
 
+    // alreadyClickedAdd is to track if it has already been clicked for a song rendered in results
+    // isSongInPlaylist is to keep track if a song rendered under playlist has already been clicked
     const [alreadyClickedAdd, setAlreadyClickedAdd] = useState(false);
 
     useEffect(() => {
@@ -48,7 +50,7 @@ const Song = ({ name, artist, preview, index, addSongToPlaylist, isSongInPlaylis
     const handleClick = () => {
         if (!isClicked && audioRef.current) {
             // since audio is pretty loud on default, start off quieter
-            audioRef.current.volume = 0.10
+            audioRef.current.volume = 0.6
 
             audioRef.current.play();
             setIsClicked(prevState => !prevState);
@@ -60,20 +62,25 @@ const Song = ({ name, artist, preview, index, addSongToPlaylist, isSongInPlaylis
         }
     }
 
-    // alreadyClickedAdd = true
     const handleAddOrRemoveSong = () => {
-        if (isSongInPlaylist && alreadyClickedAdd) {
-            console.log('first');
+
+        if (alreadyClickedAdd && playlistSongs.has(id)) {
             removeSongFromPlaylist(id);
             setAlreadyClickedAdd(prevState => !prevState);
             return;
-        } else if (isSongInPlaylist || alreadyClickedAdd) {
+        }
+
+        if (alreadyClickedAdd && !playlistSongs.has(id)) {
+            addSongToPlaylist(name, formattedArtists, id);
             setAlreadyClickedAdd(prevState => !prevState);
-            console.log('second');
+            return;
+        }
+
+        if (isSongInPlaylist || alreadyClickedAdd || playlistSongs.has(id)) {
             removeSongFromPlaylist(id);
             return;
         }
-        addSongToPlaylist(index, name, formattedArtists, id, isSongInPlaylist);
+        addSongToPlaylist(name, formattedArtists, id);
         setAlreadyClickedAdd(prev => !prev);
     }
 
