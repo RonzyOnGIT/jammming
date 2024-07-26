@@ -1,13 +1,14 @@
 html {
     --white: white;
-    --backgroundPurple: #510281;
-    --darkBlueLowOpacity: rgba(14, 11, 71, 0.3);
+    --background-purple: #510281;
+    --light-purple: #a154d1;
+    --darkblue-low-opacity: rgba(14, 11, 71, 0.3);
     --onhover-white-color: rgb(158, 155, 155);
 }
 
 .mainWrapper {
     min-height: 100vh;
-    background-color: var(--backgroundPurple);
+    background-color: var(--background-purple);
     font-family: 'Poppins', sans-serif;
     overflow: hidden;
 }
@@ -26,7 +27,7 @@ html {
 }
 
 .contentContainer {
-    background-color: var(--darkBlueLowOpacity);
+    background-color: var(--darkblue-low-opacity);
     text-align: center;
     border-radius: 0.3rem;
     padding: 0.75rem;

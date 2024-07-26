@@ -4,8 +4,8 @@ const clientId = import.meta.env.VITE_CLIENT_ID;
 const responseType = 'token';
 const redirectUri = 'http://localhost:5173/';
 // random generated string to correlate user session with responses to prevent against attacks
-const scope = 'playlist-modify-public playlist-modify-private';
-let baseSearchUrl = 'https://api.spotify.com/v1/search';
+const scope = 'playlist-modify-public user-read-private';
+let baseUrl = 'https://api.spotify.com/v1/';
 
 // returns object containing when expires and token value
 export const handleRedirectFromSpotify = () => {
@@ -41,9 +41,68 @@ export const redirectToSpotifyAuth = () => {
     window.location.href = authUrl;
 }
 
+export const getUsersProfileId = async (accessToken) => {
+    const endpoint = baseUrl + 'me';
+
+    const fetchOptions = {
+        method: 'GET',
+        headers: {'Authorization': 'Bearer ' + accessToken}
+    };
+
+    try {
+        const response = await fetch(endpoint, fetchOptions);
+
+        if (!response.ok) {
+            throw new Error(`error status: ${response.status}`)
+        }
+
+        const data = await response.json();
+        return data.id;
+
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
+
+
+}
+
+export const createNewPlaylist = async (playlistName, accessToken) => {
+    const userId = await getUsersProfileId(accessToken);
+
+    console.log(`creating playlist ${playlistName} for user id: ${userId}...`);
+    const endPoint = baseUrl + 'users/' + userId + '/playlists';
+
+    const playlistObject = {
+        name: playlistName,
+        description: 'post test',
+        public: true
+    };
+
+    const postOptions = {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + accessToken},
+        body: JSON.stringify(playlistObject)
+    }
+
+    try {
+        const response = await fetch(endPoint, postOptions);
+
+        if (!response.ok) {
+            throw new Error(`error: ${response.status}`)
+        }
+
+        const data = await response.json();
+        console.log('playlist created');
+    } catch (err) {
+        console.log(err);
+    }    
+
+}
+
 export const fetchSongs = async (songName, accessToken) => {
 
-    const endPoint = `${baseSearchUrl}?q=${songName}&type=track&limit=6`;
+    const endPoint = `${baseUrl}search?q=${songName}&type=track&limit=6`;
 
     const fetchOptions = {
         method: 'GET',
@@ -58,46 +117,9 @@ export const fetchSongs = async (songName, accessToken) => {
     }
 
     const jsonResponse = await res.json();
-    const tracks = jsonResponse.tracks.items
+    const tracks = jsonResponse.tracks.items;
     // console.log(tracks);
     return tracks;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const handleSuccess = () => {
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const authCode = urlParams.get('access_token');
-//     const state = urlParams.get('state');
-//     const expiration = urlParams.get('expires_in');
-//     console.log(urlParams);
-// }
-
-// const handleError = () => {
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const error = urlParams.get('error');
-//     const state = urlParams.get('state');
-//     console.log(urlParams);
-// }
-
-// const utilFunctions = {
-
-// };
 

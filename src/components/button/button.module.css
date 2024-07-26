@@ -1,8 +1,9 @@
 .customButton {
-    background-color: white;
+    background-color: var(--light-purple);
     border: none;
-    font-size: 2rem;
-    padding: 1rem 2.5rem;
+    font-size: 1rem;
     border-radius: .5rem;
     cursor: pointer;
+    font-family: 'poppins';
+    color: white;
 }

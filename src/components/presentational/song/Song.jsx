@@ -50,7 +50,7 @@ const Song = ({ name, artist, preview, addSongToPlaylist, isSongInPlaylist, id, 
     const handleClick = () => {
         if (!isClicked && audioRef.current) {
             // since audio is pretty loud on default, start off quieter
-            audioRef.current.volume = 0.6
+            audioRef.current.volume = 0.6;
 
             audioRef.current.play();
             setIsClicked(prevState => !prevState);

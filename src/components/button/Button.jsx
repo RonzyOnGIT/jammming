@@ -1,10 +1,18 @@
 import styles from './button.module.css';
 
 
-const Button = ({ text, handleClick }) => {
+const Button = ({ text, marginAmount, paddingTopBottom, paddingSides, handleClick }) => {
+
+    const customStyles = {
+        margin: marginAmount,
+        paddingTop: paddingTopBottom,
+        paddingBottom: paddingTopBottom,
+        paddingLeft: paddingSides,
+        paddingRight: paddingSides
+    };
 
     return (
-        <button className={styles.customButton} onClick={handleClick}>{text}</button>
+        <button style={customStyles} className={styles.customButton} onClick={handleClick}>{text}</button>
     )
 }
 

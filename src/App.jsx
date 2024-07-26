@@ -4,9 +4,10 @@ import Navbar from './components/navbar/Navbar';
 import SearchBar from './components/searchbar/SearchBar';
 import Button from './components/button/Button';
 import Songs from './components/containers/songs/Songs';
-import Playlists from './components/containers/playlists/Playlists'
+import Playlists from './components/containers/playlists/Playlists';
+import Input from './components/input/Input';
 
-import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs } from './utils/utils';
+import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs, createNewPlaylist } from './utils/utils';
 import { useEffect, useState } from 'react';
 
 
@@ -16,6 +17,7 @@ const App = () => {
     const [currToken, setCurrToken] = useState(null);
     const [songs, setSongs] = useState([]);
     const [playlistSongs, setPlaylistSongs] = useState(new Map());
+    const [playlistName, setPlaylistName] = useState('');
 
     
 
@@ -71,6 +73,24 @@ const App = () => {
 
     }
 
+    const handlePlaylistNameChange = (e) => {
+        const { value } = e.target;
+        setPlaylistName(value);
+    }
+
+    const handleCreatePlaylist = async () => {
+        if (!playlistName) {
+            console.log('empty name');
+            return;
+        }
+
+        await createNewPlaylist(playlistName, currToken);
+
+        setPlaylistName('');
+        setPlaylistSongs(new Map());
+    }
+
+
     return (
         <>
         <Navbar />
@@ -86,14 +106,16 @@ const App = () => {
                         </div>
                         <div className={styles.contentContainer} id={styles.contentContainerRight}>
                             <h2>Create A Playlist</h2>
-                            {playlistSongs.size > 0 && <Playlists playlistSongs={playlistSongs} removeFromPlaylist={removeSongFromPlaylist} />}
+                            <Input playlistName={playlistName} handlePlaylistNameChange={handlePlaylistNameChange} />
+                            {playlistSongs.size > 0 && <Playlists playlistSongs={playlistSongs} removeFromPlaylist={removeSongFromPlaylist} playlistName={playlistName} />}
+                            {playlistSongs.size > 0 && <Button text='Save To Playlist' marginAmount='1.5rem' paddingTopBottom='0.2rem' paddingSides='0.5rem' playlistName={playlistName} handleClick={handleCreatePlaylist} />}
                         </div>
                     </div>
                     {/* {isAuthenticated && <Button text='Logout' handleClick={logout} />} */}
                 </>
                 :   
                     <div className={styles.loginContainer}>
-                        <Button text={'Login To Spotify'} handleClick={redirectToSpotifyAuth}/>
+                        <Button text={'Login To Spotify'} marginAmount='0' paddingTopBottom='0.3rem' paddingSides='1rem' handleClick={redirectToSpotifyAuth}/>
                     </div>
             }
 
