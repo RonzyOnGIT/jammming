@@ -19,7 +19,7 @@ const App = () => {
     const [playlistSongs, setPlaylistSongs] = useState(new Map());
     const [playlistName, setPlaylistName] = useState('');
 
-    
+    // Curr TODO: prevent e defuault when clicking enter
 
     useEffect(() => {
         // for first run, function will return null so either return a token or empty {}
@@ -45,7 +45,6 @@ const App = () => {
             return;
         }
         const tracks = await fetchSongs(song, currToken);
-        // console.log(tracks);
         setSongs(tracks);
     }}
 
@@ -57,12 +56,13 @@ const App = () => {
         })
     }
 
-    const addSongToPlaylist = (songName, artist, id) => {
+    const addSongToPlaylist = (songName, artist, id, uri) => {
 
         const newSong = {
             name: songName,
             artist: artist,
-            id: id
+            id: id,
+            uri: uri
         }
 
         setPlaylistSongs(prevMap => {
@@ -78,16 +78,21 @@ const App = () => {
         setPlaylistName(value);
     }
 
+    const clearPlaylists = () => {
+        setPlaylistSongs(new Map());
+        setPlaylistName('');
+    }
+
     const handleCreatePlaylist = async () => {
+
         if (!playlistName) {
             console.log('empty name');
             return;
         }
 
-        await createNewPlaylist(playlistName, currToken);
+        await createNewPlaylist(playlistName, currToken, playlistSongs);
 
-        setPlaylistName('');
-        setPlaylistSongs(new Map());
+        clearPlaylists();
     }
 
 
@@ -106,7 +111,7 @@ const App = () => {
                         </div>
                         <div className={styles.contentContainer} id={styles.contentContainerRight}>
                             <h2>Create A Playlist</h2>
-                            <Input playlistName={playlistName} handlePlaylistNameChange={handlePlaylistNameChange} />
+                            <Input playlistName={playlistName} handlePlaylistNameChange={handlePlaylistNameChange} handleCreatePlaylist={handleCreatePlaylist} currToken={currToken} playlistSongs={playlistSongs} />
                             {playlistSongs.size > 0 && <Playlists playlistSongs={playlistSongs} removeFromPlaylist={removeSongFromPlaylist} playlistName={playlistName} />}
                             {playlistSongs.size > 0 && <Button text='Save To Playlist' marginAmount='1.5rem' paddingTopBottom='0.2rem' paddingSides='0.5rem' playlistName={playlistName} handleClick={handleCreatePlaylist} />}
                         </div>

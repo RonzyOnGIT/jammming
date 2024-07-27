@@ -41,6 +41,25 @@ export const redirectToSpotifyAuth = () => {
     window.location.href = authUrl;
 }
 
+export const addSongsToPlaylist = async (id, accessToken, uriSongs) => {
+    const endPoint = baseUrl + 'playlists/' + id + '/tracks';
+    
+    const requestBody = {
+        uris: uriSongs
+    };
+
+    const postOptions = {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + accessToken},
+        body: JSON.stringify(requestBody)
+    };
+
+    const results = await fetch(endPoint, postOptions);
+    const data = await results.json();
+    console.log(data);
+
+}
+
 export const getUsersProfileId = async (accessToken) => {
     const endpoint = baseUrl + 'me';
 
@@ -67,7 +86,7 @@ export const getUsersProfileId = async (accessToken) => {
 
 }
 
-export const createNewPlaylist = async (playlistName, accessToken) => {
+export const createNewPlaylist = async (playlistName, accessToken, playlistSongs) => {
     const userId = await getUsersProfileId(accessToken);
 
     console.log(`creating playlist ${playlistName} for user id: ${userId}...`);
@@ -75,7 +94,7 @@ export const createNewPlaylist = async (playlistName, accessToken) => {
 
     const playlistObject = {
         name: playlistName,
-        description: 'post test',
+        description: 'playlist',
         public: true
     };
 
@@ -93,6 +112,11 @@ export const createNewPlaylist = async (playlistName, accessToken) => {
         }
 
         const data = await response.json();
+
+        // convert playlist map() into an array of uri track values
+        const playlistSongsArray = Array.from(playlistSongs.values());
+        const songsUri = playlistSongsArray.map(song => song.uri);
+        await addSongsToPlaylist(data.id, accessToken, songsUri);
         console.log('playlist created');
     } catch (err) {
         console.log(err);

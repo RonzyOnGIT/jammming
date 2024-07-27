@@ -4,12 +4,11 @@ import { useState, useEffect, useRef } from 'react';
 
 import PlayPause from '../../playPause/PlayPause';
 
-const Song = ({ name, artist, preview, addSongToPlaylist, isSongInPlaylist, id, removeSongFromPlaylist, playlistSongs }) => {
+const Song = ({ name, artist, preview, addSongToPlaylist, isSongInPlaylist, id, removeSongFromPlaylist, playlistSongs, uri }) => {
     
     const [formattedArtists, setFormattedArtists] = useState('');
     const [isClicked, setIsClicked] = useState(false);
     const audioRef = useRef(null);
-
     // alreadyClickedAdd is to track if it has already been clicked for a song rendered in results
     // isSongInPlaylist is to keep track if a song rendered under playlist has already been clicked
     const [alreadyClickedAdd, setAlreadyClickedAdd] = useState(false);
@@ -71,7 +70,7 @@ const Song = ({ name, artist, preview, addSongToPlaylist, isSongInPlaylist, id, 
         }
 
         if (alreadyClickedAdd && !playlistSongs.has(id)) {
-            addSongToPlaylist(name, formattedArtists, id);
+            addSongToPlaylist(name, formattedArtists, id, uri);
             setAlreadyClickedAdd(prevState => !prevState);
             return;
         }
@@ -80,7 +79,7 @@ const Song = ({ name, artist, preview, addSongToPlaylist, isSongInPlaylist, id, 
             removeSongFromPlaylist(id);
             return;
         }
-        addSongToPlaylist(name, formattedArtists, id);
+        addSongToPlaylist(name, formattedArtists, id, uri);
         setAlreadyClickedAdd(prev => !prev);
     }
 

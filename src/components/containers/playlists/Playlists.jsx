@@ -10,7 +10,7 @@ const Playlists = ({ playlistSongs, removeFromPlaylist }) => {
         <>
             <div className={styles.playlistSongs}>
                 {mapArray.map(([key, value]) => (
-                    <Song artist={value.artist} name={value.name} key={value.id} isSongInPlaylist={true} removeSongFromPlaylist={removeFromPlaylist} id={value.id} playlistSongs={playlistSongs} />
+                    <Song artist={value.artist} name={value.name} key={value.id} isSongInPlaylist={true} removeSongFromPlaylist={removeFromPlaylist} id={value.id} playlistSongs={playlistSongs} uri={value.uri} />
                 ))}
             </div>
         </>
