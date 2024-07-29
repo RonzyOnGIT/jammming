@@ -19,25 +19,38 @@ const App = () => {
     const [playlistSongs, setPlaylistSongs] = useState(new Map());
     const [playlistName, setPlaylistName] = useState('');
 
-    // Curr TODO: prevent e defuault when clicking enter
-
-    useEffect(() => {
-        // for first run, function will return null so either return a token or empty {}
-        const { token = null, expiresIn = null} = handleRedirectFromSpotify() || {};
-        if (token) {
-            localStorage.setItem('currentToken', token);
-            setIsAuthenticated(true);
-            setCurrToken(token);
-        }
-
-    }, [])
-
     const logout = () => {
         localStorage.removeItem('spotifyAuthState');
         localStorage.removeItem('currentToken');
         setCurrToken(null);
         setIsAuthenticated(false);
     }
+
+    useEffect(() => {
+        // for first run, function will return null so either return a token or empty {}
+        const { token = null, expiresIn = null} = handleRedirectFromSpotify() || {};
+
+        let expiresInMiliseconds;
+
+        if (expiresIn) {
+            expiresInMiliseconds = expiresIn * 1000;
+        }
+
+        if (token) {
+            localStorage.setItem('currentToken', token);
+            setIsAuthenticated(true);
+            setCurrToken(token);
+        }
+
+        const timer = setTimeout(() => {
+            logout();
+        }, expiresInMiliseconds);
+
+        return () => {
+            clearTimeout(timer);
+        }
+
+    }, [])
 
     const handleSubmit = async (song) => {{
         if (!song) {
@@ -116,7 +129,6 @@ const App = () => {
                             {playlistSongs.size > 0 && <Button text='Save To Playlist' marginAmount='1.5rem' paddingTopBottom='0.2rem' paddingSides='0.5rem' playlistName={playlistName} handleClick={handleCreatePlaylist} />}
                         </div>
                     </div>
-                    {/* {isAuthenticated && <Button text='Logout' handleClick={logout} />} */}
                 </>
                 :   
                     <div className={styles.loginContainer}>
