@@ -146,4 +146,21 @@ export const fetchSongs = async (songName, accessToken) => {
     return tracks;
 }
 
+export const convertTimeIntoMiliseconds = (currentDate) => {
+    
+    let hours = currentDate.getHours();
+
+    // if its midnight, hours will be 0, so just set hours to 12
+    if (hours === 0) {
+        hours = 12;
+    }
+
+    const minutes = currentDate.getMinutes();
+    const seconds = currentDate.getSeconds();
+
+    const totalTimeInSeconds = (hours * 3600) + (minutes * 60) + seconds;
+    const totalTimeInMiliseconds = totalTimeInSeconds * 1000;
+    return totalTimeInMiliseconds;
+} 
+
 

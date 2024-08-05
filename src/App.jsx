@@ -7,7 +7,7 @@ import Songs from './components/containers/songs/Songs';
 import Playlists from './components/containers/playlists/Playlists';
 import Input from './components/input/Input';
 
-import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs, createNewPlaylist } from './utils/utils';
+import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs, createNewPlaylist, convertTimeIntoMiliseconds } from './utils/utils';
 import { useEffect, useState } from 'react';
 
 
@@ -22,29 +22,51 @@ const App = () => {
     const logout = () => {
         localStorage.removeItem('spotifyAuthState');
         localStorage.removeItem('currentToken');
+        localStorage.removeItem('timeWhenAuthenticated');
         setCurrToken(null);
         setIsAuthenticated(false);
     }
 
     useEffect(() => {
-        // for first run, function will return null so either return a token or empty {}
-        const { token = null, expiresIn = null} = handleRedirectFromSpotify() || {};
+        let timer;
 
-        let expiresInMiliseconds;
-
-        if (expiresIn) {
-            expiresInMiliseconds = expiresIn * 1000;
-        }
-
-        if (token) {
-            localStorage.setItem('currentToken', token);
+        if (localStorage.getItem('currentToken')) {
             setIsAuthenticated(true);
-            setCurrToken(token);
+            setCurrToken(localStorage.getItem('currentToken'));
+            const timeStart = localStorage.getItem('timeWhenAuthenticated');
+            const timeNow = new Date();
+            const timeNowInMili = convertTimeIntoMiliseconds(timeNow);
+            const timeElapsed = timeNowInMili - timeStart;
+            const newLogoutTime = 3600000 - timeElapsed;
+
+            timer = setTimeout(() => {
+                logout();
+            }, newLogoutTime);
+            return;
+        } else {
+            // for first run, function will return null so either return a token or empty {}
+            const { token = null, expiresIn = null} = handleRedirectFromSpotify() || {};
+
+            let expiresInMiliseconds;
+    
+            if (expiresIn) {
+                expiresInMiliseconds = expiresIn * 1000;
+            }
+    
+            if (token) {
+                localStorage.setItem('currentToken', token);
+                const timeWhenUserAuthenticated = new Date();
+                const timeInMil = convertTimeIntoMiliseconds(timeWhenUserAuthenticated);
+                localStorage.setItem('timeWhenAuthenticated', timeInMil);
+                setIsAuthenticated(true);
+                setCurrToken(token);
+            }
+    
+            timer = setTimeout(() => {
+                logout();
+            }, expiresInMiliseconds);
         }
 
-        const timer = setTimeout(() => {
-            logout();
-        }, expiresInMiliseconds);
 
         return () => {
             clearTimeout(timer);
