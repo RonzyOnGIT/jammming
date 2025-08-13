@@ -163,4 +163,69 @@ export const convertTimeIntoMiliseconds = (currentDate) => {
     return totalTimeInMiliseconds;
 } 
 
+// returns an object containing with { succes: boolean, userId: userId } where the userId will be used to query backend's database
+export const exchangeToken = async (code) => {
+    const endPoint = 'http://localhost:8080/api/exchange';
 
+
+    const requestBody = {
+        code: code
+    };
+
+    const postOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    };
+
+    try {
+        const res = await fetch(endPoint, postOptions);
+        const data = await res.json();
+
+        if (data.success) {
+
+            return {
+                'success': true,
+                'userId': data.userId,
+                'expireTime': data.expireTime
+            };
+
+        } else {
+
+            return {
+                'success': false,
+                'userId': null,
+                'expireTime': null
+            }
+        }
+    } catch (error) {
+        console.error("Error exchanging token: ", error);
+    }
+
+}
+
+
+/*
+
+export const addSongsToPlaylist = async (id, accessToken, uriSongs) => {
+    const endPoint = baseUrl + 'playlists/' + id + '/tracks';
+    
+    const requestBody = {
+        uris: uriSongs
+    };
+
+    const postOptions = {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + accessToken},
+        body: JSON.stringify(requestBody)
+    };
+
+    const results = await fetch(endPoint, postOptions);
+    const data = await results.json();
+    console.log(data);
+
+}
+
+*/
