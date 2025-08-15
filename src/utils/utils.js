@@ -33,6 +33,23 @@ export const handleRedirectFromSpotify = () => {
     }
 }
 
+export const logout = async (id) => {
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/users/${id}`, {method: "DELETE"});
+
+        if (response.ok) {
+            return true; // succesfully deleted user and logged out
+        } else {
+            console.error(response.status);
+            return false;
+        }
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 
 export const redirectToSpotifyAuth = () => {
     const state = uuidv4();
@@ -60,31 +77,6 @@ export const addSongsToPlaylist = async (id, accessToken, uriSongs) => {
 
 }
 
-export const getUsersProfileId = async (accessToken) => {
-    const endpoint = baseUrl + 'me';
-
-    const fetchOptions = {
-        method: 'GET',
-        headers: {'Authorization': 'Bearer ' + accessToken}
-    };
-
-    try {
-        const response = await fetch(endpoint, fetchOptions);
-
-        if (!response.ok) {
-            throw new Error(`error status: ${response.status}`)
-        }
-
-        const data = await response.json();
-        return data.id;
-
-    } catch (err) {
-        console.log(err);
-        return null;
-    }
-
-
-}
 
 export const createNewPlaylist = async (playlistName, playlistSongs, userId) => {
     // const userId = await getUsersProfileId(accessToken);
@@ -115,37 +107,17 @@ export const createNewPlaylist = async (playlistName, playlistSongs, userId) => 
         const response = await fetch(endpoint, postOptions);
 
         if (!response.ok) {
-            throw new Error(`error: ${response.status}`)
+            throw new Error(`error: ${response.status}`);
         }
 
-        console.log('playlist created');
+        return true // success so return true
     } catch (err) {
         console.log(err);
+        return false;
     }    
 
 }
 
-// export const fetchSongs = async (songName, accessToken) => {
-
-//     const endPoint = `${baseUrl}search?q=${songName}&type=track&limit=6`;
-
-//     const fetchOptions = {
-//         method: 'GET',
-//         headers: {'Authorization': 'Bearer ' + accessToken}
-//     };
-
-//     const res = await fetch(endPoint, fetchOptions);
-
-//     if (!res.ok) {
-//         console.log('request failed');
-//         return;
-//     }
-
-//     const jsonResponse = await res.json();
-//     const tracks = jsonResponse.tracks.items;
-//     // console.log(tracks);
-//     return tracks;
-// }
 
 // make fetch request for songs to spring boot backend api endpoint and the backend will look up user with id and make request to spotify with token with the user with that id
 export const fetchSongs = async (songName, id) => {
@@ -162,23 +134,6 @@ export const fetchSongs = async (songName, id) => {
     }
 
 }
-
-export const convertTimeIntoMiliseconds = (currentDate) => {
-    
-    let hours = currentDate.getHours();
-
-    // if its midnight, hours will be 0, so just set hours to 12
-    if (hours === 0) {
-        hours = 12;
-    }
-
-    const minutes = currentDate.getMinutes();
-    const seconds = currentDate.getSeconds();
-
-    const totalTimeInSeconds = (hours * 3600) + (minutes * 60) + seconds;
-    const totalTimeInMiliseconds = totalTimeInSeconds * 1000;
-    return totalTimeInMiliseconds;
-} 
 
 // returns an object containing with { succes: boolean, userId: userId } where the userId will be used to query backend's database
 export const exchangeToken = async (code) => {
@@ -210,7 +165,6 @@ export const exchangeToken = async (code) => {
             };
 
         } else {
-
             return {
                 'success': false,
                 'userId': null,
@@ -223,26 +177,3 @@ export const exchangeToken = async (code) => {
 
 }
 
-
-/*
-
-export const addSongsToPlaylist = async (id, accessToken, uriSongs) => {
-    const endPoint = baseUrl + 'playlists/' + id + '/tracks';
-    
-    const requestBody = {
-        uris: uriSongs
-    };
-
-    const postOptions = {
-        method: 'POST',
-        headers: {'Authorization': 'Bearer ' + accessToken},
-        body: JSON.stringify(requestBody)
-    };
-
-    const results = await fetch(endPoint, postOptions);
-    const data = await results.json();
-    console.log(data);
-
-}
-
-*/

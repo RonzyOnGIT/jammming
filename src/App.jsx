@@ -6,10 +6,10 @@ import Button from './components/button/Button';
 import Songs from './components/containers/songs/Songs';
 import Playlists from './components/containers/playlists/Playlists';
 import Input from './components/input/Input';
+import Toast from './components/toast/Toast';
 
-import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs, createNewPlaylist, exchangeToken } from './utils/utils';
+import { fetchSongs, createNewPlaylist, exchangeToken, logout } from './utils/utils';
 import { useEffect, useState } from 'react';
-
 
 const App = () => {
 
@@ -19,26 +19,9 @@ const App = () => {
     const [playlistSongs, setPlaylistSongs] = useState(new Map());
     const [playlistName, setPlaylistName] = useState('');
 
+    const [showToast, setShowToast] = useState(false);
+    const [toastStatus, setToastStatus] = useState("");
     const [userId, setUserId] = useState(-1);
-
-
-    const logout = async (id) => {
-
-        try {
-            const response = await fetch(`http://localhost:8080/api/users/${id}`, {method: "DELETE"});
-
-            if (response.ok) {
-                setCurrToken(null);
-                setIsAuthenticated(false);
-            } else {
-                console.error(response.status);
-            }
-
-        } catch (error) {
-            console.error(error);
-        }
-        
-    }
 
     const spotifyLogin = async () => {
 
@@ -73,7 +56,6 @@ const App = () => {
 
         let timer;
 
-
         // user logged in, so now have to make a fetch request in the backend to retrieve token and start timer
         if (code) {
             async function exchange() {
@@ -87,9 +69,18 @@ const App = () => {
                     const remainingTime = expireTime - nowSeconds; // subtract from expiring time the amount of time that has elapsed since being logged in
                     const safeRemainingTime = Math.max(remainingTime, 0); // if for whatever case nowSeconds is greater which means there was some huge delay or bug
                     timer = setTimeout(() => {
-                        logout(userId);
-                    }, safeRemainingTime * 1000);
+                        (async () => {
+                            const success = await logout(userId);
 
+                            // if not success, logout already handles printing to console
+                            if (success) {
+                                setCurrToken(null);
+                                setIsAuthenticated(false);
+                            } else {
+                                console.log("fail to logout");
+                            }
+                        })();
+                    }, safeRemainingTime * 1000);
                     window.history.replaceState({}, document.title, window.location.pathname);
                 } else {
                     console.log("Token exchange failed");
@@ -158,15 +149,22 @@ const App = () => {
             return;
         }
 
-        await createNewPlaylist(playlistName, playlistSongs, userId);
+        const response = await createNewPlaylist(playlistName, playlistSongs, userId);
+
+        setToastStatus(response ? "success" : "fail");
+        setShowToast(true);
+
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
 
         clearPlaylists();
     }
 
-
     return (
         <>
         <Navbar />
+        {showToast && <Toast status={toastStatus} show={showToast} />}
         <div className={`${styles.mainWrapper} ${isAuthenticated ? '' : styles.login}`}>
             {isAuthenticated 
                 ?
