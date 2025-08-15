@@ -7,7 +7,7 @@ import Songs from './components/containers/songs/Songs';
 import Playlists from './components/containers/playlists/Playlists';
 import Input from './components/input/Input';
 
-import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs, createNewPlaylist, convertTimeIntoMiliseconds, exchangeToken } from './utils/utils';
+import { redirectToSpotifyAuth, handleRedirectFromSpotify, fetchSongs, createNewPlaylist, exchangeToken } from './utils/utils';
 import { useEffect, useState } from 'react';
 
 
@@ -106,61 +106,15 @@ const App = () => {
 
     }, [])
 
-    // useEffect(() => {
-    //     let timer;
-
-    //     if (localStorage.getItem('currentToken')) {
-    //         setIsAuthenticated(true);
-    //         setCurrToken(localStorage.getItem('currentToken'));
-    //         const timeStart = localStorage.getItem('timeWhenAuthenticated');
-    //         const timeNow = new Date();
-    //         const timeNowInMili = convertTimeIntoMiliseconds(timeNow);
-    //         const timeElapsed = timeNowInMili - timeStart;
-    //         const newLogoutTime = 3600000 - timeElapsed; 
-
-    //         timer = setTimeout(() => {
-    //             logout();
-    //         }, newLogoutTime);
-    //         return;
-    //     } else {
-    //         // for first run, function will return null so either return a token or empty {}
-    //         const { token = null, expiresIn = null} = handleRedirectFromSpotify() || {};
-
-    //         let expiresInMiliseconds;
-    
-    //         if (expiresIn) {
-    //             expiresInMiliseconds = expiresIn * 1000;
-    //         }
-    
-    //         if (token) {
-    //             localStorage.setItem('currentToken', token);
-    //             const timeWhenUserAuthenticated = new Date();
-    //             const timeInMil = convertTimeIntoMiliseconds(timeWhenUserAuthenticated);
-    //             localStorage.setItem('timeWhenAuthenticated', timeInMil);
-    //             setIsAuthenticated(true);
-    //             setCurrToken(token);
-    //         }
-    
-    //         timer = setTimeout(() => {
-    //             logout();
-    //         }, expiresInMiliseconds);
-    //     }
-
-
-    //     return () => {
-    //         clearTimeout(timer);
-    //     }
-
-    // }, [])
-
     const handleSubmit = async (song) => {{
         if (!song) {
             console.log('no song inputted');
             return;
         }
-        const tracks = await fetchSongs(song, currToken);
+        const tracks = await fetchSongs(song, userId);
         setSongs(tracks);
     }}
+
 
     const removeSongFromPlaylist = (id) => {
         setPlaylistSongs(prevPlaylist => {
@@ -204,7 +158,7 @@ const App = () => {
             return;
         }
 
-        await createNewPlaylist(playlistName, currToken, playlistSongs);
+        await createNewPlaylist(playlistName, playlistSongs, userId);
 
         clearPlaylists();
     }

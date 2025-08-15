@@ -86,37 +86,38 @@ export const getUsersProfileId = async (accessToken) => {
 
 }
 
-export const createNewPlaylist = async (playlistName, accessToken, playlistSongs) => {
-    const userId = await getUsersProfileId(accessToken);
+export const createNewPlaylist = async (playlistName, playlistSongs, userId) => {
+    // const userId = await getUsersProfileId(accessToken);
 
-    console.log(`creating playlist ${playlistName} for user id: ${userId}...`);
-    const endPoint = baseUrl + 'users/' + userId + '/playlists';
+    const playlistSongsArray = Array.from(playlistSongs.values());
+    const songsUri = playlistSongsArray.map(song => song.uri);
 
-    const playlistObject = {
+    const playlistObjectBody = {
+        uris: songsUri,
+        userId: userId,
         name: playlistName,
-        description: 'playlist',
+        description: "playlist",
         public: true
     };
 
     const postOptions = {
         method: 'POST',
-        headers: {'Authorization': 'Bearer ' + accessToken},
-        body: JSON.stringify(playlistObject)
-    }
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(playlistObjectBody)
+    };
+
 
     try {
-        const response = await fetch(endPoint, postOptions);
+        // const response = await fetch(endPoint, postOptions);
+        const endpoint = 'http://localhost:8080/api/query/playlist';
+        const response = await fetch(endpoint, postOptions);
 
         if (!response.ok) {
             throw new Error(`error: ${response.status}`)
         }
 
-        const data = await response.json();
-
-        // convert playlist map() into an array of uri track values
-        const playlistSongsArray = Array.from(playlistSongs.values());
-        const songsUri = playlistSongsArray.map(song => song.uri);
-        await addSongsToPlaylist(data.id, accessToken, songsUri);
         console.log('playlist created');
     } catch (err) {
         console.log(err);
@@ -124,26 +125,42 @@ export const createNewPlaylist = async (playlistName, accessToken, playlistSongs
 
 }
 
-export const fetchSongs = async (songName, accessToken) => {
+// export const fetchSongs = async (songName, accessToken) => {
 
-    const endPoint = `${baseUrl}search?q=${songName}&type=track&limit=6`;
+//     const endPoint = `${baseUrl}search?q=${songName}&type=track&limit=6`;
 
-    const fetchOptions = {
-        method: 'GET',
-        headers: {'Authorization': 'Bearer ' + accessToken}
-    };
+//     const fetchOptions = {
+//         method: 'GET',
+//         headers: {'Authorization': 'Bearer ' + accessToken}
+//     };
 
-    const res = await fetch(endPoint, fetchOptions);
+//     const res = await fetch(endPoint, fetchOptions);
 
-    if (!res.ok) {
-        console.log('request failed');
-        return;
+//     if (!res.ok) {
+//         console.log('request failed');
+//         return;
+//     }
+
+//     const jsonResponse = await res.json();
+//     const tracks = jsonResponse.tracks.items;
+//     // console.log(tracks);
+//     return tracks;
+// }
+
+// make fetch request for songs to spring boot backend api endpoint and the backend will look up user with id and make request to spotify with token with the user with that id
+export const fetchSongs = async (songName, id) => {
+    let endpoint = `http://localhost:8080/api/query/songs?id=${id}&songName=${songName}`;
+
+    try {
+        const response = await fetch(endpoint);
+        if (response.ok) {
+            const data = await response.json();
+            return data; // array of songs
+        }
+    } catch (error) {
+        console.error(error);
     }
 
-    const jsonResponse = await res.json();
-    const tracks = jsonResponse.tracks.items;
-    // console.log(tracks);
-    return tracks;
 }
 
 export const convertTimeIntoMiliseconds = (currentDate) => {
