@@ -3,7 +3,7 @@ Frontend website where u can look for spotify songs as well as create a playlist
 
 ### Note
 Currently this has to be run in conjuction with the backend repo: https://github.com/RonzyOnGIT/jammming_backend
-I plan to host the at least host the backend in the near future so you dont have to clone and run the backend repo.
+I plan to host at least host the backend in the near future so you dont have to clone and run the backend repo and install all the java stuff 😅.
 
 
 run `npm i` to install dependencies then to launch app, run `npm run dev` and open a browser with the given localhost address and port
